@@ -24,7 +24,10 @@ import net.sourceforge.openforecast.Forecaster;
 import net.sourceforge.openforecast.ForecastingModel;
 import net.sourceforge.openforecast.Observation;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TrafficVolumePredictTest.
+ *
  * @author Vaishali's
  * 
  * The Class TrafficVolumePredictTest 
@@ -61,12 +64,17 @@ public class TrafficVolumePredictTest {
 		lanes.add(9546);
 		
 		for (Integer laneId : lanes) {
-			learnAndPredictUsingLaneId(laneId);
+			learnAndPredictVolumeForLaneId(laneId);
 		}
 		
 	}
 
-	private static void learnAndPredictUsingLaneId(int laneId) {
+	/**
+	 * Learn and predict volume for lane id.
+	 *
+	 * @param laneId the lane id
+	 */
+	private static void learnAndPredictVolumeForLaneId(int laneId) {
 		
 		System.out.println("Lane ID = "+ laneId);
 		List<LaneData> laneDataList = getDataForLane(laneId);
@@ -91,7 +99,7 @@ public class TrafficVolumePredictTest {
 	 *
 	 * @param laneDataList the lane data list
 	 * @param testLaneDataList  - Lane data list to predict volume
-	 * @return 
+	 * @return the double
 	 */
 	public static double predictVolumeForLaneData(List<LaneData> laneDataList, List<LaneData> testLaneDataList) {
 

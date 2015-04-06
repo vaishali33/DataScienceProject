@@ -69,7 +69,7 @@ public class TrafficVolumePredictTest {
 	private static void learnAndPredictUsingLaneId(int laneId) {
 		
 		System.out.println("Lane ID = "+ laneId);
-		List<LaneData> laneDataList = getDataForLane(9873);
+		List<LaneData> laneDataList = getDataForLane(laneId);
 		int len = laneDataList.size();
 		
 		//using 80% data for training the model and 20% data for testing the model

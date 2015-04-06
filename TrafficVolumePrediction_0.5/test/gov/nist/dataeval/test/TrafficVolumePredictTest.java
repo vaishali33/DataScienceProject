@@ -154,8 +154,10 @@ public class TrafficVolumePredictTest {
 		while ( it.hasNext() )
 		{
 			DataPoint dp0 = (DataPoint)it.next();
-			double forecastValue = dp0.getDependentValue();
-
+			
+			//Type-caste into integer as volume is an integer
+			int forecastValue = (int) Math.round(dp0.getDependentValue());
+			
 			//calculate error in prediction
 			int actual = testLaneDataList.get(i).getVolume();
 			mpe += Math.abs(actual-forecastValue)/actual;
@@ -180,7 +182,10 @@ public class TrafficVolumePredictTest {
 		
 		Connection conn = new ConnectionManager().getConnection();
 		//Select statement for retrieving lane data for 2013
-		String sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date < date('2014-01-01')";
+		//String sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date < date('2014-01-01')";
+		
+		//Select statement for retrieving lane data shuffled
+		String sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date > date('2014-01-01') order by rand() limit 10000";//limit 10000
 		
 		try {
 			Statement stmt = conn.createStatement();

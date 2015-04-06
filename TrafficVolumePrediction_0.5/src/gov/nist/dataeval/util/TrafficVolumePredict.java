@@ -119,7 +119,7 @@ public class TrafficVolumePredict {
 			     while ( it.hasNext() )
 			        {
 			        DataPoint dp0 = (DataPoint)it.next();
-			        double forecastValue = dp0.getDependentValue();
+			        int forecastValue = (int) Math.round(dp0.getDependentValue());
 
 			        // Do something with the forecast value, e.g.
 			        System.out.println(forecastValue+"===="+ dp0 );

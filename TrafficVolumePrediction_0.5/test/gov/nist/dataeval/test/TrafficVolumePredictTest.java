@@ -1,5 +1,5 @@
-/*
- * 
+/* This class runs cross - validation  
+ * on polynomial regression model
  */
 package gov.nist.dataeval.test;
 
@@ -24,7 +24,6 @@ import net.sourceforge.openforecast.Forecaster;
 import net.sourceforge.openforecast.ForecastingModel;
 import net.sourceforge.openforecast.Observation;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TrafficVolumePredictTest.
  *
@@ -185,7 +184,7 @@ public class TrafficVolumePredictTest {
 		//String sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date < date('2014-01-01')";
 		
 		//Select statement for retrieving lane data shuffled
-		String sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date > date('2014-01-01') order by rand() limit 10000";//limit 10000
+		String sql = "select * from lanedata where lane_id = "+lane_id; //order by rand()";//limit 10000
 		
 		try {
 			Statement stmt = conn.createStatement();

@@ -6,7 +6,9 @@ package gov.nist.dataeval.db.bean;
 import java.sql.Timestamp;
 
 /**
- * The Class LaneData.
+ * @author Vaishali's
+ * 
+ * The Class LaneData is Bean.
  */
 public class LaneData {
 	

@@ -17,6 +17,8 @@ import java.sql.Timestamp;
 import java.util.Properties;
 
 /**
+ * @author Vaishali's
+ * 
  * The Class InsertIntoDatabase.
  */
 public class InsertIntoDatabase {
@@ -39,7 +41,7 @@ public class InsertIntoDatabase {
 			Properties prop = new Properties();
 			prop.load(fileStream);
 			dataPath = prop.getProperty("dataDir");
-			inputFile = prop.getProperty("trainingData");
+			inputFile = prop.getProperty("testData");
 			connectionURL = prop.getProperty("connectionUrl");
 
 		}catch(IOException e){
@@ -72,7 +74,7 @@ public class InsertIntoDatabase {
 		try {
 			conn = new ConnectionManager().getConnection();
 			
-			String sql = "insert into traffic.pane_data(lane_id,measurement_date,speed,volume,occupancy,quality) values(?,?,?,?,?,?)";
+			String sql = "insert into traffic.lanedata(lane_id,measurement_date,speed,volume,occupancy,quality) values(?,?,?,?,?,?)";
 			pstmt = conn.prepareStatement(sql);
 			
 			br = new BufferedReader(new FileReader(dataPath+"\\"+inputFile));
@@ -112,6 +114,7 @@ public class InsertIntoDatabase {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			//free resources
 			try {
 				conn.close();
 				pstmt.close();

@@ -6,7 +6,10 @@ package gov.nist.dataeval.test;
 import gov.nist.dataeval.db.ConnectionManager;
 import gov.nist.dataeval.db.bean.LaneData;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -34,6 +37,8 @@ import net.sourceforge.openforecast.Observation;
  */
 public class TrafficVolumePredictTest {
 
+	static BufferedWriter bw ;
+	
 	static{
 		String propFile = "prop/config.properties";
 		FileInputStream fileStream;
@@ -43,7 +48,7 @@ public class TrafficVolumePredictTest {
 			Properties prop = new Properties();
 			prop.load(fileStream);
 			String dataPath = prop.getProperty("data");
-			
+			bw = new BufferedWriter(new FileWriter(new File("Output.txt")));
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -76,13 +81,21 @@ public class TrafficVolumePredictTest {
 	private static void learnAndPredictVolumeForLaneId(int laneId) {
 		
 		System.out.println("Lane ID = "+ laneId);
-		List<LaneData> laneDataList = getDataForLane(laneId);
+		
+		//cross-validate on some data 80-20 slit
+		/*List<LaneData> laneDataList = getDataForLane(laneId);
 		int len = laneDataList.size();
 		
 		//using 80% data for training the model and 20% data for testing the model
 		int split = (int) (len*0.8);
 		List<LaneData> trainLaneDataList = laneDataList.subList(0, split);
 		List<LaneData> testLaneDataList = laneDataList.subList(split, len);
+		*/
+		
+		//training model on November 2013 data and testing on November 2014 data
+		List<LaneData> trainLaneDataList = getDataForLane(laneId, true);
+		List<LaneData> testLaneDataList = getDataForLane(laneId, false);
+		
 		
 		System.out.println("Training data size = "+trainLaneDataList.size());
 		System.out.println("Test data size = "+testLaneDataList.size());
@@ -159,6 +172,7 @@ public class TrafficVolumePredictTest {
 			
 			//calculate error in prediction
 			int actual = testLaneDataList.get(i).getVolume();
+			writeToFile(forecastValue, actual);
 			mpe += Math.abs(actual-forecastValue)/actual;
 
 			//System.out.println("Actual value = "+ actual +"Forecast value = " +forecastValue);
@@ -170,22 +184,37 @@ public class TrafficVolumePredictTest {
 	}
 
 	/**
+	 * @param forecastValue
+	 * @param actual
+	 */
+	private static void writeToFile(int forecastValue, int actual) {
+		try{
+			bw.append(forecastValue+"\t"+actual+"\n");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+
+	/**
 	 * Gets the data for lane.
 	 *
 	 * @param lane_id the lane_id
 	 * @return the data for lane
 	 */
-	public static List<LaneData> getDataForLane(int lane_id) {
+	public static List<LaneData> getDataForLane(int lane_id, boolean train) {
 		
 		List<LaneData> laneDataList = new ArrayList<LaneData>();
 		
 		Connection conn = new ConnectionManager().getConnection();
-		//Select statement for retrieving lane data for 2013
-		//String sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date < date('2014-01-01')";
-		
-		//Select statement for retrieving lane data shuffled
-		String sql = "select * from lanedata where lane_id = "+lane_id; //order by rand()";//limit 10000
-		
+		String sql;
+		if(train){
+			//Select statement for retrieving lane data for 2013
+			sql = "select * from lanedata where lane_id = "+lane_id+" and measurement_date < date('2014-01-01')";
+		}else{
+			//Select statement for retrieving lane data shuffled
+			sql = "select * from lanedata where lane_id = "+lane_id+ " and measurement_date > date('2014-01-01')";
+		}
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -207,7 +236,7 @@ public class TrafficVolumePredictTest {
 			e.printStackTrace();
 		}
 		
-		System.out.println("data size = "+laneDataList.size());
+		//System.out.println("data size = "+laneDataList.size());
 		return laneDataList;
 	}
 
